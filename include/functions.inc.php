@@ -38,11 +38,11 @@ function checkrequest($appid, $ret) {
 function generateentry($appid) {
     global $db;
     $activation = generateRandomString(20);
-    if (!$result = $db->query("INSERT INTO `users` (`id`, `app`, `userid`, `activation`, `chatid`) VALUES ('', '" . $appid . "', '0', '" . $activation . "', '0');")) {
+    if (!$result = $db->query("INSERT INTO `users` (`id`, `app`, `userid`, `activation`, `chatid`, username, first_name) VALUES ('', '" . $appid . "', '0', '" . $activation . "', '0', '', '');")) {
         return false;
     } else {
         $ret = $db->query("SELECT * FROM apps WHERE id=" . $appid);
         $row = $ret->fetch_assoc();
-        return ["id" => $result->insert_id, "activation" => $activation, "name" => $row["name"], "description" => $row["description"], "domain" => $row["domain"], "secureonly" => $row["secureonly"]];
+        return ["id" => $ret->insert_id, "activation" => $activation, "name" => $row["name"], "description" => $row["description"], "domain" => $row["domain"], "secureonly" => $row["secureonly"]];
     }
 }
