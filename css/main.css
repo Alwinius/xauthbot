@@ -1,0 +1,41 @@
+/*
+created by Alwin Ebermann (alwin@alwin.net.au)
+*/
+/* 
+    Created on : Apr 17, 2016, 10:07:20 AM
+    Author     : Alwin Ebermann (alwin@alwin.net.au)
+*/
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+  padding-top: 50px;
+}
+
+.connectmessage {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
+.footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+  padding-top: 15px;
+}
+
+body > .container {
+  padding: 60px 15px 20px;
+}

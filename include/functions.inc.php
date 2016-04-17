@@ -100,3 +100,107 @@ function regapp($post) {
         }
     }
 }
+
+// design
+
+function createhead($title) {
+    ?>
+<!DOCTYPE html>
+<html lang="en" ng-app="scrobbler">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="Alwin Ebermann">
+
+    <title><?php echo $title; ?></title>
+    <!--<link rel="icon" type="image/png" href="//lastfm.ldkf.de/favicon.png">-->
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Custom styles for this template -->
+    <link href="css/main.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head><body>
+<?php
+}
+
+function createconnectbody($result, $ret) {
+    ?>
+    <div class="container">
+
+      <div class="connectmessage">
+          <h1><?php echo $result["name"]; ?></h1>
+          <p><?php  echo htmlspecialchars($result["description"]); ?></p><br>
+          <p class="lead">Use the following link to login with your Telegram account:</p>
+          <p class="lead"><a href="https://telegram.me/xauthbot?start=<?php echo $result["activation"]; ?>" target="_blank">Click</a></p><br/>
+          <p>Finally, click here  <a href="<?php echo ($result["secureonly"] == 1) ? "https" : "http";
+        echo "://" . $result["domain"] . "/" . $ret;
+        echo '?id='.$result["id"].'">here</a> to return to ' . $result["name"] . ' after you activated the bot.'; ?></p>
+      </div></div>
+      <?php
+}
+
+function createreg() {
+    ?><div class="container">
+<!--      <form method="post">
+    Name: <input name="name" maxlength="100"><br/>
+    Description: <textarea name="description" row="3" maxlength="200"></textarea><br>
+    Domain: <input name="domain" placeholder="sub.example.com" maxlength="100"> You'll be able to forward your users to this domain only.<br>
+    Connect via https only: <input type="checkbox" name="secureonly" value="1"> Your users will be forwarded to the https version of your site directly.<br/>
+    <input type="submit">
+</form>-->
+    <form method="post">
+  <div class="form-group">
+    <label for="name">App name</label>
+    <input type="text" class="form-control" id="name" name="name" maxlength="100" placeholder="xAuthApp">
+    <p class="help-block">Only letters and numbers please.</p>
+  </div>
+  <div class="form-group">
+    <label for="desc">Description</label>
+    <textarea name="description" class="form-control" placeholder="This is a really great app..." maxlength="200" rows="3" id="desc"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="domain">Domain</label>
+    <input type="text" class="form-control" id="domain" name="domain" maxlength="100" placeholder="sub.example.com">
+    <p class="help-block">You'll be able to forward your users to this domain only.</p>
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" name="secureonly" value="1" checked="checked"> Connect via https only
+    </label>
+      <p class="help-block">Your users will be directly forwarded to the https version of your site.</p>
+  </div>
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>
+    
+    
+    </div>
+<?php
+}
+
+function createfooter() {
+    ?>
+      <footer class="footer">
+      <div class="container">
+          <p class="text-muted">Created by <a href="https://alwin.net.au">Alwin Ebermann</a> - <a href="https://ldkf.de/site-notice.html">Site Notice</a> - <a href="https://ldkf.de/privacy.html">Privacy</a> - <a href="https://github.com/Brom2/xauthbot">Developer</a></p>
+      </div>
+    </footer>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<!--    <script>window.jQuery || document.write(\'<script src="js/jquery.min.js"><\/script>\')</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>   
+  </body>
+</html>
+  <?php
+}
