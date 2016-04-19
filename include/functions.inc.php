@@ -38,7 +38,7 @@ function checkrequest($appid, $ret) {
 function generateentry($appid) {
     global $db;
     $activation = generateRandomString(20);
-    if (!$result = $db->query("INSERT INTO `users` (`id`, `app`, `userid`, `activation`, `chatid`, username, first_name) VALUES ('', '" . $appid . "', '0', '" . $activation . "', '0', '', '');")) {
+    if (!$result = $db->query("INSERT INTO `users` (`id`, `app`, `userid`, `activation`, username, first_name, last_name) VALUES ('', '" . $appid . "', '0', '" . $activation . "', '', '', '');")) {
         return false;
     } else {
         $ret = $db->query("SELECT * FROM apps WHERE id=" . $appid);
@@ -101,6 +101,49 @@ function regapp($post) {
     }
 }
 
+function getactivelogins($user) {
+    global $db;
+    $entries=[];
+    $result=$db->query("SELECT users.id, apps.name FROM users INNER JOIN apps ON users.app = apps.id WHERE users.userid=".$user);
+    while($row = $result->fetch_assoc()){
+        $entries[]=["id"=>$row["id"], "name"=>$row["name"]];
+    }
+    return $entries;
+}
+
+function listlogins($logins) {
+    if($logins!=[]) {
+        $message="You're logged in to the following sites:\n";
+        foreach ($logins as $login) {
+            $message.=$login["id"]." - ".$login["name"]."\n";
+        }
+        $message.="Use /logout [ID] to log out of one of these sites.";
+        return $message;
+    }
+    else {
+        $message="No authorized logins at the moment.";
+        return $message;
+    }
+}
+
+function botlogout($user, $id) {
+    global $db;
+    $res=$db->query("SELECT apps.name FROM users INNER JOIN apps ON users.app = apps.id WHERE users.userid=".$user." AND `users`.`id` =".$id);
+    if($res->num_rows==1) {
+        $db->query("DELETE FROM `xauthbot`.`users` WHERE `users`.`id` =".$id." AND userid=".$user);
+        if($db->affected_rows===1) {
+            return $res->fetch_assoc()["name"];
+        } else {
+            return false;
+        }
+    }
+    else {
+        #return $db->num_rows;
+        return false;
+    }
+}
+
+
 // design
 
 function createhead($title) {
@@ -137,24 +180,17 @@ function createconnectbody($result, $ret) {
       <div class="connectmessage">
           <h1><?php echo $result["name"]; ?></h1>
           <p><?php  echo htmlspecialchars($result["description"]); ?></p><br>
-          <p class="lead">Use the following link to login with your Telegram account:</p>
-          <p class="lead"><a href="https://telegram.me/xauthbot?start=<?php echo $result["activation"]; ?>" target="_blank">Click</a></p><br/>
-          <p>Finally, click here  <a href="<?php echo ($result["secureonly"] == 1) ? "https" : "http";
+          <p class="xead"><button id="btn" class="btn btn-default">Login with Telegram</button><br>
+          <br>Please click Start in the opening Telegram chat with the bot.</p><br/>
+          <p class="forward">You'll be forwarded to <a class="fward" href="<?php echo ($result["secureonly"] == 1) ? "https" : "http";
         echo "://" . $result["domain"] . "/" . $ret;
-        echo '?id='.$result["id"].'">here</a> to return to ' . $result["name"] . ' after you activated the bot.'; ?></p>
+        echo '?id='.$result["id"].'">'.$result["name"].'</a>.<br>Thank you for using this service.<div style="display:none;" id="activation">'.$result["activation"].'</div></p>';?>
       </div></div>
       <?php
 }
 
 function createreg() {
     ?><div class="container">
-<!--      <form method="post">
-    Name: <input name="name" maxlength="100"><br/>
-    Description: <textarea name="description" row="3" maxlength="200"></textarea><br>
-    Domain: <input name="domain" placeholder="sub.example.com" maxlength="100"> You'll be able to forward your users to this domain only.<br>
-    Connect via https only: <input type="checkbox" name="secureonly" value="1"> Your users will be forwarded to the https version of your site directly.<br/>
-    <input type="submit">
-</form>-->
     <form method="post">
   <div class="form-group">
     <label for="name">App name</label>
@@ -200,7 +236,19 @@ function createfooter() {
 <!--    <script>window.jQuery || document.write(\'<script src="js/jquery.min.js"><\/script>\')</script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>-->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>   
-  </body>
+    <script src="include/main.js"></script>
+    </body>
 </html>
   <?php
+}
+
+function creategeneralmessage($heading, $msg) {
+        ?>
+    <div class="container">
+
+      <div class="connectmessage">
+          <h1><?php echo $heading; ?></h1>
+          <p><?php  echo $msg; ?></p><br>
+      </div></div>
+      <?php
 }
