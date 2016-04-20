@@ -138,11 +138,79 @@ function botlogout($user, $id) {
         }
     }
     else {
-        #return $db->num_rows;
         return false;
     }
 }
 
+function apilogout($user, $id) {
+    global $db;
+    $res=$db->query("SELECT apps.name FROM users INNER JOIN apps ON users.app = apps.id WHERE users.id=".$user." AND `users`.`app` =".$id);
+    if($res->num_rows==1) {
+        $db->query("DELETE FROM `xauthbot`.`users` WHERE `users`.`app` =".$id." AND id=".$user);
+        if($db->affected_rows===1) {
+            return $res->fetch_assoc()["name"];
+        } else {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+}
+
+function retfirst_name($id) {
+    global $db;
+    $res=$db->query("SELECT first_name FROM users WHERE id=$id");
+    $first_name=$res->fetch_assoc()["first_name"];
+    $return=["status"=>"Success", "statuscode"=>200, "action"=>"first_name", "first_name"=>$first_name];
+    return json_encode($return);
+}
+
+function retlast_name($id) {
+    global $db;
+    $res=$db->query("SELECT last_name FROM users WHERE id=$id");
+    $last_name=$res->fetch_assoc()["last_name"];
+    $return=["status"=>"Success", "statuscode"=>200, "action"=>"last_name", "last_name"=>$last_name];
+    return json_encode($return);
+}
+
+function checkuser($id, $app) {
+    global $db;
+    $res=$db->query("SELECT first_name FROM users WHERE id=".$id." AND app=".$app);
+    if($res->num_rows==1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function apisendmsg($msg, $id) {
+    global $db;
+    $res=$db->query("SELECT users.userid, apps.name, users.id FROM users INNER JOIN apps ON users.app=apps.id WHERE users.nomsg=0 AND users.id=".$id);
+    if($res->num_rows==1) {
+        $user=$res->fetch_assoc();
+        sendmessage($user["userid"], "New Message from ".$user["name"].":\n". $msg."\n\nTo stop messages from ".$user["name"]." type /stopmsg ".$user["id"]);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function stopmsg($user, $id) {
+    global $db;
+    $res=$db->query("SELECT apps.name FROM users INNER JOIN apps ON users.app = apps.id WHERE userid=".$user." AND `users`.`id` =".$id);
+    if($res->num_rows==1) {
+        $db->query("UPDATE `xauthbot`.`users` SET nomsg=1 WHERE `users`.`id` =".$id." AND userid=".$user);
+        if($db->affected_rows===1) {
+            return $res->fetch_assoc()["name"];
+        } else {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+}
 
 // design
 

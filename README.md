@@ -20,7 +20,10 @@ Use my bot to connect your webapp or software to Telegram and let users log in w
 #### Actions
 
 * username - to get the user's username on Telegram (keep in mind that not everyone has one - this could return an empty string)
-* more to come
+* first_name - to get the user's first name on Telegram
+* last_name - to get the user's username on Telegram (keep in mind that not everyone has one - this could return an empty string)
+* logout - to log a user out
+* message - Send a message to a user - you need to send the message in the msg parameter, at the moment it is not included in the hash, but this could change soon
 
 #### Response
 
@@ -29,18 +32,21 @@ Use my bot to connect your webapp or software to Telegram and let users log in w
 * Statuscodes used at the moment are
     * 200 - Success
     * 400 - Syntax Error (this could be a wrong hash, missing parameters or non-existing users)
-    * 401 - if an action is not yet fully implemented
+    * 402 - Not logged out (Error logging out, most likely the user is already logged out)
+    * 403 - Syntax Error, no message provided (You didn't send a message with the message parameter)
+    * 405 - User rejects messages (The user disabled messaging for your site)
 * In case of 200, the requested data will be in the corresponding field (ie the username in the username field)
 
 ### How it works
 
 * When visiting the connect page, the user will get an entry with an authentication code
-* If they click on the link to the bot, the authentication code will be sent to the bot via deep linking
+* If they click on the link to the bot, the authentication code will be sent to the bot via deep linking - the user never sees it
 
 
 ### To-do
-* Style
-* Auto-forward after contacting the bot
-* more API actions
-* Revoking of permissions in Telegram
-* Sending of messages to users through the API
+* hashing of the message
+* default for receiving messages
+* change to POST at the api
+* smaller design improvements - usability of auth (help after some time etc), regapp help (js validation)
+* auto update of user details (as far as possible)
+* encryption of the secret?

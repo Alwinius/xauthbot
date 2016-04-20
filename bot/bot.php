@@ -32,7 +32,7 @@ if(preg_match("/\/start (?P<activation>[A-Za-z0-9]{20})/", $update["message"]["t
     $message=  listlogins(getactivelogins($update["message"]["from"]["id"]));
     sendmessage($update["message"]["chat"]["id"], $message);
 } else if(preg_match("/\/logout (?P<id>[0-9]{1,11})/", $update["message"]["text"], $matches)) {
-    if(($res=botlogout($update["message"]["from"]["id"], $matches["id"]))!=FALSE) {
+    if(($res=botlogout($update["message"]["from"]["id"], $matches["id"]))!==FALSE) {
         $message="You were successfully logged out of ".$res."\n\n";
         $message.=listlogins(getactivelogins($update["message"]["from"]["id"]));
         sendmessage($update["message"]["chat"]["id"], $message);
@@ -44,6 +44,12 @@ if(preg_match("/\/start (?P<activation>[A-Za-z0-9]{20})/", $update["message"]["t
     }
 } else if($update["message"]["text"]=="/logout") {
     sendmessage($update["message"]["chat"]["id"], "Please specify the id directly after the command.");
+} else if(preg_match("/\/stopmsg (?P<id>[0-9]{1,11})/", $update["message"]["text"], $matches)) {
+    if(($ret=stopmsg($update["message"]["from"]["id"], $matches["id"]))!==FALSE) {
+        sendmessage($update["message"]["chat"]["id"], "You'll get no more messages from ".$ret);
+    } else {
+        sendmessage($update["message"]["chat"]["id"], "Sorry, this didn't work.");
+    }
 }
 else {
     #sendmessage($update["message"]["chat"]["id"], json_encode($update));
