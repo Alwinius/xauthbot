@@ -14,10 +14,13 @@ function generateRandomString($length = 10) {
     return $randomString;
 }
 
-function sendmessage($chatid, $message) {
+function sendmessage($chatid, $message, $keyboard=[]) {
     global $auth_token;
     $url = "https://api.telegram.org/bot" . $auth_token . "/";
     $sendto = $url . "sendmessage?chat_id=" . $chatid . "&parse_mode=Markdown&text=" . urlencode($message);
+    if($keyboard!=[]) {
+        $sendto.='&reply_markup='.json_encode($keyboard);
+    }
     file_get_contents($sendto);
     return true;
 }
@@ -113,16 +116,18 @@ function getactivelogins($user) {
 
 function listlogins($logins) {
     if($logins!=[]) {
+        $keyboard=["keyboard"=>[], "one_time_keyboard"=>TRUE];
         $message="You're logged in to the following sites:\n";
         foreach ($logins as $login) {
             $message.=$login["id"]." - ".$login["name"]."\n";
+            $keyboard["keyboard"][]=["/logout ".$login["id"], "/stopmsg ".$login["id"]];
         }
         $message.="Use /logout [ID] to log out of one of these sites.";
-        return $message;
+        return [$message, $keyboard];
     }
     else {
         $message="No authorized logins at the moment.";
-        return $message;
+        return [$message, []];
     }
 }
 
