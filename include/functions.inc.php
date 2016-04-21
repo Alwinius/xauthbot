@@ -55,12 +55,12 @@ function basiccheckapirequest($appid, $id, $action, $hash, $actions) {
     }
 }
 
-function checkhash($appid, $id, $action, $hash) {
+function checkhash($appid, $id, $action, $hash, $msg) {
     global $db;
     $res=$db->query("SELECT apps.secret FROM users INNER JOIN apps ON users.app= apps.id WHERE users.id=$id AND apps.id=$appid AND activation = '' ");
     if($res->num_rows===1) {
         $info = $res->fetch_assoc();
-        if(hash("sha256", $info["secret"].$appid.$id.$action)===$hash) {
+        if(hash("sha256", $info["secret"].$appid.$id.$action.$msg)===$hash) {
             return true;
         } else {
             return false;
@@ -212,6 +212,19 @@ function stopmsg($user, $id) {
     }
 }
 
+function updateuser($user) {
+    global $db;
+    $username=(isset($user["username"])) ? $user["username"]:"";
+    $last_name=(isset($user["last_name"])) ? $user["last_name"]:"";
+    $result=$db->query("UPDATE `users` SET username = '" . $username . "', first_name='".$user["first_name"] ."', last_name='".$last_name."' WHERE `userid` = '".$user["id"]."';");
+    if($result->affected_rows==1) {
+        return true;
+    } else {
+        return false;
+    }
+        
+}
+
 // design
 
 function createhead($title) {
@@ -254,25 +267,46 @@ function createconnectbody($result, $ret) {
         echo "://" . $result["domain"] . "/" . $ret;
         echo '?id='.$result["id"].'">'.$result["name"].'</a>.<br>Thank you for using this service.<div style="display:none;" id="activation">'.$result["activation"].'</div></p>';?>
       </div></div>
+          <div id="trouble" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Having trouble connecting?</h4>
+      </div>
+      <div class="modal-body">
+        <p>This is what you have to do:</p>
+        <p>First press the green "Send Message" button.<br><img src="css/tgram.me.JPG"></p>
+        <p>Then select tg in the opening popup (This is the desktop Telegram client)<br><img src="css/popup.JPG"></p>
+        <p>Press Start in the Telegram desktop client. <img src="css/tgram.JPG"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
       <?php
 }
 
 function createreg() {
     ?><div class="container">
-    <form method="post">
+    <form method="post" id="regform">
   <div class="form-group">
     <label for="name">App name</label>
     <input type="text" class="form-control" id="name" name="name" maxlength="100" placeholder="xAuthApp">
-    <p class="help-block">Only letters and numbers please.</p>
   </div>
   <div class="form-group">
     <label for="desc">Description</label>
     <textarea name="description" class="form-control" placeholder="This is a really great app..." maxlength="200" rows="3" id="desc"></textarea>
+    <p class="help-block">This will be displayed in the connection page.</p>
   </div>
   <div class="form-group">
     <label for="domain">Domain</label>
     <input type="text" class="form-control" id="domain" name="domain" maxlength="100" placeholder="sub.example.com">
-    <p class="help-block">You'll be able to forward your users to this domain only.</p>
+    <p class="help-block">Your users will be forwarded to this domain.</p>
   </div>
   <div class="checkbox">
     <label>
@@ -282,7 +316,6 @@ function createreg() {
   </div>
   <button type="submit" class="btn btn-default">Submit</button>
 </form>
-    
     
     </div>
 <?php
@@ -304,6 +337,8 @@ function createfooter() {
 <!--    <script>window.jQuery || document.write(\'<script src="js/jquery.min.js"><\/script>\')</script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>-->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>   
+    <script src="include/formValidation.min.js"></script>
+    <script src="include/framework_bootstrap.min.js"></script>
     <script src="include/main.js"></script>
     </body>
 </html>

@@ -8,14 +8,14 @@ include("include/config.inc.php");
 include("include/functions.inc.php");
 
 //incomming: appid, id (userid), action, hash (secretappididaction, sha256)
-$appid=filter_input(INPUT_GET, "appid");
-$id= filter_input(INPUT_GET, "id");
-$action=  filter_input(INPUT_GET, "action");
-$hash=  filter_input(INPUT_GET, "hash");
-$msg=  filter_input(INPUT_GET, "msg");
+$appid=filter_input(INPUT_POST, "appid");
+$id= filter_input(INPUT_POST, "id");
+$action=  filter_input(INPUT_POST, "action");
+$hash=  filter_input(INPUT_POST, "hash");
 $actions=["username", "first_name", "last_name", "logout", "message"];
+$msg=(isset($_POST["msg"])) ? $_POST["msg"]:"";
 
-if(basiccheckapirequest($appid,$id, $action, $hash, $actions) && checkhash($appid, $id, $action, $hash) && checkuser($id, $appid)) {
+if(basiccheckapirequest($appid,$id, $action, $hash, $actions) && checkhash($appid, $id, $action, $hash, $msg) && checkuser($id, $appid)) {
     switch ($action) {
         case "username":
             echo retuser($id);

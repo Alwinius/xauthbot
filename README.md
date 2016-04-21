@@ -11,11 +11,12 @@ Use my bot to connect your webapp or software to Telegram and let users log in w
 ### The API
 
  * URL: https://xauth.ldkf.de/api.php
- * For a successful request you need the following GET parameters:
+ * For a successful request you need the following POST parameters:
     * appid - you get it the registration of your app
     * id - the user id, you get when the user returns after connecting
     * action - what you want to do with the API (see below)
-    * hash - the sha256 hash of the following data without separation between: secret (from app registration), appid, id, action - a string to hash could look like this: 6O4BZl1yj9btgqyjRFBH43username
+    * hash - the sha256 hash of the following data without separation between: secret (from app registration), appid, id, action[, mesg] - a string to hash could look like this: 6O4BZl1yj9btgqyjRFBH43username
+    * [msg - only needed if you want to send a message]
 
 #### Actions
 
@@ -23,7 +24,7 @@ Use my bot to connect your webapp or software to Telegram and let users log in w
 * first_name - to get the user's first name on Telegram
 * last_name - to get the user's username on Telegram (keep in mind that not everyone has one - this could return an empty string)
 * logout - to log a user out
-* message - Send a message to a user - you need to send the message in the msg parameter, at the moment it is not included in the hash, but this could change soon
+* message - Send a message to a user - you need to send the message in the msg parameter - make sure to include msg in the hash
 
 #### Response
 
@@ -44,9 +45,4 @@ Use my bot to connect your webapp or software to Telegram and let users log in w
 
 
 ### To-do
-* hashing of the message
-* default for receiving messages
-* change to POST at the api
-* smaller design improvements - usability of auth (help after some time etc), regapp help (js validation)
-* auto update of user details (as far as possible)
-* encryption of the secret?
+* custom keyboards

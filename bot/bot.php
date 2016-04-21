@@ -15,10 +15,8 @@ if(preg_match("/\/start (?P<activation>[A-Za-z0-9]{20})/", $update["message"]["t
     if($result->num_rows==0) {
         sendmessage($update["message"]["chat"]["id"], "Authentication error ");
     } else {
-        $username=(isset($update["message"]["from"]["username"])) ? $update["message"]["from"]["username"]:"";
-        $last_name=(isset($update["message"]["from"]["last_name"])) ? $update["message"]["from"]["last_name"]:"";
-        $result=$db->query("UPDATE `users` SET username = '" . $username . "', userid = '" . $update["message"]["from"]["id"] ."', first_name='".$update["message"]["from"]["first_name"] ."', last_name='".$last_name."', activation='' WHERE `activation` = '".$matches["activation"]."';");
-        if($result->affected_rows==1) {
+        $result=$db->query("UPDATE users SET activation='', userid='".$update["message"]["from"]["id"]."' WHERE activation='".$matches["activation"]);
+        if($result->affected_rows==1 && !updateuser($update["message"]["from"])) {
             sendmessage($update["message"]["chat"]["id"], "Update error");
         } else {
             sendmessage($update["message"]["chat"]["id"], "Success! Go back to your browser now.");
@@ -29,6 +27,7 @@ if(preg_match("/\/start (?P<activation>[A-Za-z0-9]{20})/", $update["message"]["t
             . "If your favourite site is not yet supported, ask the administrator now.";
     sendmessage($update["message"]["chat"]["id"], $message);
 } else if($update["message"]["text"]=="/list") {
+    updateuser($update["message"]["from"]);
     $message=  listlogins(getactivelogins($update["message"]["from"]["id"]));
     sendmessage($update["message"]["chat"]["id"], $message);
 } else if(preg_match("/\/logout (?P<id>[0-9]{1,11})/", $update["message"]["text"], $matches)) {
@@ -43,8 +42,10 @@ if(preg_match("/\/start (?P<activation>[A-Za-z0-9]{20})/", $update["message"]["t
         sendmessage($update["message"]["chat"]["id"], $message);
     }
 } else if($update["message"]["text"]=="/logout") {
+    updateuser($update["message"]["from"]);
     sendmessage($update["message"]["chat"]["id"], "Please specify the id directly after the command.");
 } else if(preg_match("/\/stopmsg (?P<id>[0-9]{1,11})/", $update["message"]["text"], $matches)) {
+    updateuser($update["message"]["from"]);
     if(($ret=stopmsg($update["message"]["from"]["id"], $matches["id"]))!==FALSE) {
         sendmessage($update["message"]["chat"]["id"], "You'll get no more messages from ".$ret);
     } else {
@@ -52,6 +53,5 @@ if(preg_match("/\/start (?P<activation>[A-Za-z0-9]{20})/", $update["message"]["t
     }
 }
 else {
-    #sendmessage($update["message"]["chat"]["id"], json_encode($update));
     sendmessage($update["message"]["chat"]["id"], "Unsupported message, for now.");
 }
