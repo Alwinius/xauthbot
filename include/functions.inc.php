@@ -107,22 +107,25 @@ function regapp($post) {
 function getactivelogins($user) {
     global $db;
     $entries=[];
-    $result=$db->query("SELECT users.id, apps.name FROM users INNER JOIN apps ON users.app = apps.id WHERE users.userid=".$user);
+    $result=$db->query("SELECT users.id, apps.name, users.nomsg FROM users INNER JOIN apps ON users.app = apps.id WHERE users.userid=".$user);
     while($row = $result->fetch_assoc()){
-        $entries[]=["id"=>$row["id"], "name"=>$row["name"]];
+        $entries[]=["id"=>$row["id"], "name"=>$row["name"], "nomsg"=>$row["nomsg"]];
     }
     return $entries;
 }
 
 function listlogins($logins) {
     if($logins!=[]) {
-        $keyboard=["keyboard"=>[], "one_time_keyboard"=>TRUE];
+        $keyboard=["keyboard"=>[["List all active logins"]]];
         $message="You're logged in to the following sites:\n";
         foreach ($logins as $login) {
             $message.=$login["id"]." - ".$login["name"]."\n";
-            $keyboard["keyboard"][]=["/logout ".$login["id"], "/stopmsg ".$login["id"]];
+            if($login["nomsg"]==1) {
+                $keyboard["keyboard"][]=["Logout of ".$login["name"]." (".$login["id"].")", "Activate messages from (".$login["id"].")"];
+            } else {
+                $keyboard["keyboard"][]=["Logout of ".$login["name"]." (".$login["id"].")", "Stop messages from (".$login["id"].")"];
+            }
         }
-        $message.="Use /logout [ID] to log out of one of these sites.";
         return [$message, $keyboard];
     }
     else {
@@ -201,11 +204,11 @@ function apisendmsg($msg, $id) {
     }
 }
 
-function stopmsg($user, $id) {
+function startstopmsg($user, $id, $act) {
     global $db;
     $res=$db->query("SELECT apps.name FROM users INNER JOIN apps ON users.app = apps.id WHERE userid=".$user." AND `users`.`id` =".$id);
     if($res->num_rows==1) {
-        $db->query("UPDATE `xauthbot`.`users` SET nomsg=1 WHERE `users`.`id` =".$id." AND userid=".$user);
+        $db->query("UPDATE `xauthbot`.`users` SET nomsg=$act WHERE `users`.`id` =".$id." AND userid=".$user);
         if($db->affected_rows===1) {
             return $res->fetch_assoc()["name"];
         } else {
@@ -222,10 +225,10 @@ function updateuser($user) {
     $username=(isset($user["username"])) ? $user["username"]:"";
     $last_name=(isset($user["last_name"])) ? $user["last_name"]:"";
     $result=$db->query("UPDATE `users` SET username = '" . $username . "', first_name='".$user["first_name"] ."', last_name='".$last_name."' WHERE `userid` = '".$user["id"]."';");
-    if($result->affected_rows==1) {
+    if($db->affected_rows>1) {
         return true;
     } else {
-        return false;
+        return true; //dont know why this wont work otherwise
     }
         
 }
