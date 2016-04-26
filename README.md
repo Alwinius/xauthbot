@@ -4,7 +4,7 @@ Use my bot to connect your webapp or software to Telegram and let users log in w
 
 ### How to use it
  * Register your app first ([here](https://xauth.ldkf.de/registerapp.php))
- * To connect a user, forward them to https://xauth.ldkf.de/connect.php?id=YOURAPPID&ret=RET
+ * To connect a user, forward them to https://xauth.ldkf.de/connect.php?appid=YOURAPPID&ret=RET
  * After successfully authenticating, your user will be forwarded to https://yourdomain.tld/RET?id= (or http if you didn't select https at registration) where id is the user's id.
  * You'll need this id when you want to make requests to the API
 
