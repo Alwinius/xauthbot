@@ -78,7 +78,7 @@ function retuser($id) {
     $res=$db->query("SELECT username FROM users WHERE id=$id");
     $username=$res->fetch_assoc()["username"];
     $return=["status"=>"Success", "statuscode"=>200, "action"=>"username", "username"=>$username];
-    return json_encode($return);
+    return $return;
 }
 
 function checkregvalues($post) {
@@ -171,7 +171,7 @@ function retfirst_name($id) {
     $res=$db->query("SELECT first_name FROM users WHERE id=$id");
     $first_name=$res->fetch_assoc()["first_name"];
     $return=["status"=>"Success", "statuscode"=>200, "action"=>"first_name", "first_name"=>$first_name];
-    return json_encode($return);
+    return $return;
 }
 
 function retlast_name($id) {
@@ -179,7 +179,23 @@ function retlast_name($id) {
     $res=$db->query("SELECT last_name FROM users WHERE id=$id");
     $last_name=$res->fetch_assoc()["last_name"];
     $return=["status"=>"Success", "statuscode"=>200, "action"=>"last_name", "last_name"=>$last_name];
-    return json_encode($return);
+    return $return;
+}
+
+function retall($id) {
+    global $db;
+    $res=$db->query("SELECT first_name, last_name, username FROM users WHERE id=$id");
+    $ret=$res->fetch_assoc();
+    $return=["status"=>"Success", "statuscode"=>200, "action"=>"all", "last_name"=>$ret["last_name"], "first_name"=>$ret["first_name"], "username"=>$ret["username"]];
+    return $return;
+}
+
+function retuserid($id) {
+    global $db;
+    $res=$db->query("SELECT userid FROM users WHERE id=$id");
+    $userid=$res->fetch_assoc()["userid"];
+    $return=["status"=>"Success", "statuscode"=>200, "action"=>"userid", "userid"=>$userid];
+    return $return;
 }
 
 function checkuser($id, $app) {

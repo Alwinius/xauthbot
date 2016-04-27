@@ -23,6 +23,7 @@ Use my bot to connect your webapp or software to Telegram and let users log in w
 * username - to get the user's username on Telegram (keep in mind that not everyone has one - this could return an empty string)
 * first_name - to get the user's first name on Telegram
 * last_name - to get the user's username on Telegram (keep in mind that not everyone has one - this could return an empty string)
+* all - to get username, first_name and last_name
 * logout - to log a user out
 * message - Send a message to a user - you need to send the message in the msg parameter - make sure to include msg in the hash
 

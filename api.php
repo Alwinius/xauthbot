@@ -12,19 +12,19 @@ $appid=filter_input(INPUT_POST, "appid");
 $id= filter_input(INPUT_POST, "id");
 $action=  filter_input(INPUT_POST, "action");
 $hash=  filter_input(INPUT_POST, "hash");
-$actions=["username", "first_name", "last_name", "logout", "message"];
+$actions=["username", "first_name", "last_name", "logout", "message", "all", "userid"];
 $msg=(isset($_POST["msg"])) ? $_POST["msg"]:"";
 
 if(basiccheckapirequest($appid,$id, $action, $hash, $actions) && checkhash($appid, $id, $action, $hash, $msg) && checkuser($id, $appid)) {
     switch ($action) {
         case "username":
-            echo retuser($id);
+            echo json_encode(retuser($id));
             break;
         case "first_name":
-            echo retfirst_name($id);
+            echo json_encode(retfirst_name($id));
             break;
         case "last_name":
-            echo retlast_name($id);
+            echo json_encode(retlast_name($id));
             break;
         case "logout":
             if(($ret=apilogout($id, $appid))===FALSE) {
@@ -32,6 +32,12 @@ if(basiccheckapirequest($appid,$id, $action, $hash, $actions) && checkhash($appi
             } else {
                 echo json_encode(["status"=>"Success", "statuscode"=>200, "name"=>$ret, "action"=>"logout"]);
             }
+            break;
+        case "all":
+            echo json_encode(retall($id));
+            break;
+        case "userid":
+            echo json_encode(retuserid($id));
             break;
         case "message":
             if($msg!='') {
