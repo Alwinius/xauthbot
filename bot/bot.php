@@ -17,7 +17,7 @@ if(preg_match("/\/start (?P<activation>[A-Za-z0-9]{20})/", $update["message"]["t
     } else {
         $result2=$db->query("UPDATE users SET activation='', userid='".$update["message"]["from"]["id"]."' WHERE activation='".$matches["activation"]."'");
         if($db->affected_rows==1 && updateuser($update["message"]["from"])) {
-            sendmessage($update["message"]["chat"]["id"], "Success! Go back to your browser now.".  updateuser($update["message"]["from"]));
+            sendmessage($update["message"]["chat"]["id"], "Success! Go back to your browser now.");
         } else {
             sendmessage($update["message"]["chat"]["id"], "Update error");
         }
