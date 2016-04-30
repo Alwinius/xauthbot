@@ -53,13 +53,14 @@ $(document).ready(function(){
     $('.forward').hide();
     var btn = document.getElementById("btn");
     var activation=document.getElementById("activation").textContent;
+    var appid=document.getElementById("appid").textContent;
     btn.onclick = function() {
-        var win = window.open("https://telegram.me/xauthbot?start="+activation);
+        var win = window.open("https://telegram.me/xauthbot?start="+activation+"-"+appid);
         var counter=0;
         var timer = setInterval(function() {
             counter++;
             $.post("bot/act.php",{act: activation}, function(data) {
-                if(data==="false") {
+                if(data!=="false") {
                     win.close();
                     $('#trouble').modal('hide');
                     clearInterval(timer);
@@ -73,7 +74,7 @@ $(document).ready(function(){
                         //nothing
                     });
                     setTimeout(function() {
-                        window.location.href = $('.fward').attr('href');
+                        window.location.href = $('.fward').attr('href')+data;
                     }, 2000);
                 }
             });

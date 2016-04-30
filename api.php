@@ -16,7 +16,7 @@ $action=  filter_input(INPUT_POST, "action", FILTER_CALLBACK, array('options' =>
 $hash = filter_input(INPUT_POST, 'hash', FILTER_CALLBACK, array('options' => array($myValidator, 'hash')));
 $msg=(isset($_POST["msg"])) ? $_POST["msg"]:"";
 
-if(($appid && $id && $hash && $action)!==FALSE) {
+if($appid && $id && $hash && $action) {
     if(checkhash($appid, $id, $action, $hash, $msg)) {
         if(checkuser($id, $appid)) {
             switch ($action) {

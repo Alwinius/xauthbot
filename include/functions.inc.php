@@ -59,21 +59,9 @@ function checkrequest($appid, $ret) {
 function generateentry($appid) {
     global $db;
     $activation = generateRandomString(20);
-    if (!$result = $db->query("INSERT INTO `users` (`id`, `app`, `userid`, `activation`, username, first_name, last_name) VALUES ('', '" . $appid . "', '0', '" . $activation . "', '', '', '');")) {
-        return false;
-    } else {
-        $ret = $db->query("SELECT * FROM apps WHERE id=" . $appid);
-        $row = $ret->fetch_assoc();
-        return ["id" => $db->insert_id, "activation" => $activation, "name" => $row["name"], "description" => $row["description"], "domain" => $row["domain"], "secureonly" => $row["secureonly"]];
-    }
-}
-
-function basiccheckapirequest($appid, $id, $action, $hash, $actions) {
-    if (ctype_digit($appid) && ctype_digit($id) && in_array($action, $actions) && strlen($hash) == 64 && ctype_xdigit($hash)) {
-        return true;
-    } else {
-        return false;
-    }
+    $ret = $db->query("SELECT * FROM apps WHERE id=" . $appid);
+    $row = $ret->fetch_assoc();
+    return ["activation" => $activation, "id"=>$row["id"], "name" => $row["name"], "description" => $row["description"], "domain" => $row["domain"], "secureonly" => $row["secureonly"]];
 }
 
 function checkhash($appid, $id, $action, $hash, $msg) {
@@ -114,7 +102,7 @@ function regapp($post) {
         return false;
     } else {
         $secret = generateRandomString(20);
-        if (!$result = $db->query("INSERT INTO apps(id, name, description, secret, domain, secureonly) VALUES('', '" . $post["name"] . "', '" . $db->real_escape_string($post["description"]) . "', '  $secret', '" . $db->real_escape_string($post["domain"]) . "', '" . (($post["secureonly"] == 1) ? 1 : 0) . "');")) {
+        if (!$result = $db->query("INSERT INTO apps(id, name, description, secret, domain, secureonly) VALUES('', '" . $post["name"] . "', '" . $db->real_escape_string($post["description"]) . "', '$secret', '" . $db->real_escape_string($post["domain"]) . "', '" . (($post["secureonly"] == 1) ? 1 : 0) . "');")) {
             return false;
         } else {
             return ["id" => $db->insert_id, "secret" => $secret];
@@ -303,7 +291,7 @@ function createconnectbody($result, $ret) {
                     <p class="forward">You'll be forwarded to <a class="fward" href="<?php
         echo ($result["secureonly"] == 1) ? "https" : "http";
         echo "://" . $result["domain"] . "/" . $ret;
-        echo '?id=' . $result["id"] . '">' . $result["name"] . '</a>.<br>Thank you for using this service.<div style="display:none;" id="activation">' . $result["activation"] . '</div></p>';
+        echo '?id=">' . $result["name"] . '</a>.<br>Thank you for using this service.<div style="display:none;" id="activation">' . $result["activation"] . '</div><div style="display:none;" id="appid">' . $result["id"] . '</div></p>';
         ?>
                                                                  </div></div>
                                                                  <div id="trouble" class="modal fade" role="dialog">

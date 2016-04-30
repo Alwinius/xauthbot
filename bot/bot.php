@@ -10,12 +10,19 @@ include("../include/functions.inc.php");
 $content = file_get_contents("php://input");
 $update = json_decode($content, true);
 
-if(preg_match("/\/start (?P<activation>[A-Za-z0-9]{20})/", $update["message"]["text"], $matches)) {
-    $result =$db->query("SELECT id FROM users WHERE  activation = '".$matches["activation"] . "'");
+if(preg_match("/\/start (?P<activation>[A-Za-z0-9]{20})-(?P<appid>[0-9]{1,4})/", $update["message"]["text"], $matches)) {
+    $result =$db->query("SELECT id FROM users WHERE userid = ".$update["message"]["chat"]["id"]." AND appid = ".$matches["appid"]);
     if($result->num_rows==0) {
-        sendmessage($update["message"]["chat"]["id"], "Authentication error ");
+        //create entry with activation in it
+        $res=$db->query("INSERT INTO `xauthbot`.`users` (`id`, `app`, `userid`, `activation`, `first_name`, `username`, `last_name`, `nomsg`) VALUES (NULL, '". $matches["appid"] . "', '" . $update["message"]["chat"]["id"] .  "', '" . $matches["activation"] . "', '', '', '', '0');");
+        if($db->affected_rows==1 && updateuser($update["message"]["from"])) {
+            sendmessage($update["message"]["chat"]["id"], "Success! Go back to your browser now.");
+        } else {
+            sendmessage($update["message"]["chat"]["id"], "Update error");
+        }
     } else {
-        $result2=$db->query("UPDATE users SET activation='', userid='".$update["message"]["from"]["id"]."' WHERE activation='".$matches["activation"]."'");
+        //update the activation field
+        $result2=$db->query("UPDATE users SET activation='". $matches["activation"] . "' WHERE userid=".$update["message"]["from"]["id"]." AND appid=".$matches["appid"]);
         if($db->affected_rows==1 && updateuser($update["message"]["from"])) {
             sendmessage($update["message"]["chat"]["id"], "Success! Go back to your browser now.");
         } else {
