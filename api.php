@@ -10,11 +10,11 @@ include("include/functions.inc.php");
 //incomming: appid, id (userid), action, hash (secretappididaction, sha256)
 $myValidator = new Validator;
 
-$appid=filter_input(INPUT_POST, "appid", FILTER_VALIDATE_INT);
-$id= filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
-$action=  filter_input(INPUT_POST, "action", FILTER_CALLBACK, array('options' => array($myValidator, 'action')));
-$hash = filter_input(INPUT_POST, 'hash', FILTER_CALLBACK, array('options' => array($myValidator, 'hash')));
-$msg=(isset($_POST["msg"])) ? $_POST["msg"]:"";
+$appid=(isset($_POST["appid"])) ? filter_input(INPUT_POST, "appid", FILTER_VALIDATE_INT):filter_input(INPUT_GET, "appid", FILTER_VALIDATE_INT);
+$id= (isset($_POST["id"])) ? filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT):filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
+$action=  (isset($_POST["action"])) ? filter_input(INPUT_POST, "action", FILTER_CALLBACK, array('options' => array($myValidator, 'action'))):filter_input(INPUT_GET, "action", FILTER_CALLBACK, array('options' => array($myValidator, 'action')));
+$hash = (isset($_POST["hash"])) ? filter_input(INPUT_POST, 'hash', FILTER_CALLBACK, array('options' => array($myValidator, 'hash'))):filter_input(INPUT_GET, 'hash', FILTER_CALLBACK, array('options' => array($myValidator, 'hash')));
+$msg=(isset($_POST["msg"])) ? $_POST["msg"]:(isset($_GET["msg"])) ? $_GET["msg"]:"";
 
 if($appid && $id && $hash && $action) {
     if(checkhash($appid, $id, $action, $hash, $msg)) {

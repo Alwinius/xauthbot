@@ -11,7 +11,7 @@ Use my bot to connect your webapp or software to Telegram and let users log in w
 ### The API
 
  * URL: https://xauth.ldkf.de/api.php
- * For a successful request you need the following POST parameters:
+ * For a successful request you need the following POST or GET (you can even combine them) parameters:
     * appid - you get it after the registration of your app together with the secret
     * id - the user id, you get when the user returns after connecting
     * action - what you want to do with the API (see below)

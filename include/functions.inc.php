@@ -45,7 +45,7 @@ function sendmessage($chatid, $message, $keyboard = []) {
 
 function checkrequest($appid, $ret) {
     global $db;
-    if (ctype_digit($appid) && !filter_var("http://example.com/" . $ret, FILTER_VALIDATE_URL) === FALSE) {
+    if (filter_var("http://example.com/" . $ret, FILTER_VALIDATE_URL) !== FALSE) {
         if (!$result = $db->query("SELECT id FROM apps WHERE id = $appid;")) {
             return false;
         } else {
@@ -66,9 +66,10 @@ function generateentry($appid) {
 
 function checkhash($appid, $id, $action, $hash, $msg) {
     global $db;
-    $res = $db->query("SELECT apps.secret FROM users INNER JOIN apps ON users.app= apps.id WHERE users.id=$id AND apps.id=$appid AND activation = '' ");
-    if ($res->num_rows === 1) {
+    $res = $db->query("SELECT apps.secret FROM users INNER JOIN apps ON users.app= apps.id WHERE users.id=$id AND apps.id=$appid ");
+    if ($res->num_rows == 1) {
         $info = $res->fetch_assoc();
+        echo $info["secret"] . $appid . $id . $action . $msg;
         if (hash("sha256", $info["secret"] . $appid . $id . $action . $msg) === $hash) {
             return true;
         } else {
