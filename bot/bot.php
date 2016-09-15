@@ -67,7 +67,6 @@ if(preg_match("/\/start (?P<activation>[A-Za-z0-9]{20})-(?P<appid>[0-9]{1,4})/",
         sendmessage($update["message"]["chat"]["id"], "Sorry, this didn't work.");
     }
 }
-
 else {
-    sendmessage($update["message"]["chat"]["id"], "Unsupported message, for now.");
+        @sendmessage($update["message"]["chat"]["id"], "Unsupported message, for now.");
 }

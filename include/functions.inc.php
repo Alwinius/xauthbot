@@ -35,7 +35,7 @@ function generateRandomString($length = 10) {
 function sendmessage($chatid, $message, $keyboard = []) {
     global $auth_token;
     $url = "https://api.telegram.org/bot" . $auth_token . "/";
-    $sendto = $url . "sendmessage?chat_id=" . $chatid . "&parse_mode=Markdown&text=" . urlencode($message);
+    $sendto = $url . 'sendmessage?chat_id=' . $chatid . '&parse_mode=Markdown&text=' . urlencode($message);
     if ($keyboard != []) {
         $sendto.='&reply_markup=' . json_encode($keyboard);
     }
@@ -69,7 +69,6 @@ function checkhash($appid, $id, $action, $hash, $msg) {
     $res = $db->query("SELECT apps.secret FROM users INNER JOIN apps ON users.app= apps.id WHERE users.id=$id AND apps.id=$appid ");
     if ($res->num_rows == 1) {
         $info = $res->fetch_assoc();
-        echo $info["secret"] . $appid . $id . $action . $msg;
         if (hash("sha256", $info["secret"] . $appid . $id . $action . $msg) === $hash) {
             return true;
         } else {
